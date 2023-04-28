@@ -1,4 +1,4 @@
-package com.demo.jwtinaction;
+package com.demo.jwtinaction.controller;
 
 
 import org.springframework.web.bind.annotation.GetMapping;

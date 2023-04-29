@@ -30,10 +30,10 @@ public class User  implements UserDetails {
         this.password = password;
         this.role = role;
     }
-
     public User() {
 
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

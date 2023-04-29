@@ -1,6 +1,10 @@
 package com.demo.jwtinaction.app_config;
 
+import com.demo.jwtinaction.data.entities.Role;
+import com.demo.jwtinaction.data.entities.User;
+import com.demo.jwtinaction.data.repository.UserRepository;
 import com.demo.jwtinaction.service.UserDetailsServiceImpl;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,12 +27,10 @@ public class ApplicationConfiguration   {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authentication) throws Exception {
         return authentication.getAuthenticationManager();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider(){
 
@@ -37,6 +39,12 @@ public class ApplicationConfiguration   {
         authenticationProvider.setUserDetailsService(userDetailsService);
         return authenticationProvider;
     }
-
+    @Bean
+    public CommandLineRunner commandLineRunner(UserRepository userRepository){
+        return args -> {
+            User user = new User("AdminUser",passwordEncoder().encode("1234"), Role.ADMIN);
+            userRepository.save(user);
+        };
+    }
 
 }

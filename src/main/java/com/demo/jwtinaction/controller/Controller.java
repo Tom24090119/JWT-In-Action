@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.http.HttpResponse;
-
 @RestController
 public class Controller {
 
@@ -19,30 +17,30 @@ public class Controller {
 
     public Controller(RegistrationAndAuthService registrationAndAuthService) {
         this.registrationAndAuthService = registrationAndAuthService;
+
     }
 
-    @GetMapping("/api/v1/user/hello")
-    public ResponseEntity<String> responseEntity(){
-        return new ResponseEntity<>("Hello World", HttpStatusCode.valueOf(200));
-    }
-
-    @PostMapping("/api/v1/user/register")
+    @PostMapping("/api/v1/auth/register")
     public ResponseEntity<String> registerUser(@RequestBody RegistrationAndAuthRequest request){
-
         if(request.username() == null || request.password() == null)
             return new ResponseEntity<>("Invalid Details",HttpStatusCode.valueOf(401));
 
-        //TODO: Create and Call method in RegistrationAndAuthService class , register()
+        if(!registrationAndAuthService.registerUser(request))
+            return new ResponseEntity<>("Username already Taken",HttpStatusCode.valueOf(401));
 
         return new ResponseEntity<>("Registration complete",HttpStatusCode.valueOf(200));
     }
 
-    @PostMapping("/api/v1/user/sign-in")
+    @PostMapping("/api/v1/auth/sign-in")
     public ResponseEntity<String> authenticateUser(@RequestBody RegistrationAndAuthRequest request){
         if(request.username() == null || request.password() == null)
             return new ResponseEntity<>("Invalid Details",HttpStatusCode.valueOf(401));
-        //TODO : Create and call method in RegistrationAndAuthService, authenticate
-        return new ResponseEntity<>("Need to add jwt token in header and also print it",HttpStatusCode.valueOf(200));
+
+        return new ResponseEntity<>(registrationAndAuthService.authenticate(request),HttpStatusCode.valueOf(200));
     }
 
+    @GetMapping("/api/v1/hello")
+    public ResponseEntity<String> helloUser(){
+        return new ResponseEntity<>("Hello from JWT",HttpStatusCode.valueOf(200));
+    }
 }

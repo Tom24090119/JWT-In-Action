@@ -3,6 +3,7 @@ package com.demo.jwtinaction.controller;
 
 import com.demo.jwtinaction.dto.RegistrationAndAuthRequest;
 import com.demo.jwtinaction.service.RegistrationAndAuthService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,14 @@ public class Controller {
         if(request.username() == null || request.password() == null)
             return new ResponseEntity<>("Invalid Details",HttpStatusCode.valueOf(401));
 
-        return new ResponseEntity<>(registrationAndAuthService.authenticate(request),HttpStatusCode.valueOf(200));
+        String authenticate = registrationAndAuthService.authenticate(request);
+        String authorizationKey = "Bearer " + authenticate;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION,authorizationKey);
+
+        return new ResponseEntity<>("Your JWT token is : " + authenticate,
+                headers,
+                HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/api/v1/hello")
